@@ -112,10 +112,12 @@ public class ChromeImageGenerator<T extends NodeModel & WizardNode<REP, VAL>, RE
     public ChromeImageGenerator(final T nodeModel) {
         super(nodeModel);
         m_service = ChromeViewService.getInstance();
-        final REP viewRepresentation = nodeModel.getViewRepresentation();
-        final VAL viewValue = nodeModel.getViewValue();
-        final WizardViewCreator<REP, VAL> viewCreator = nodeModel.getViewCreator();
-        writeTempViewFiles(viewRepresentation, viewValue, viewCreator);
+        if (nodeModel != null) {
+            final REP viewRepresentation = nodeModel.getViewRepresentation();
+            final VAL viewValue = nodeModel.getViewValue();
+            final WizardViewCreator<REP, VAL> viewCreator = nodeModel.getViewCreator();
+            writeTempViewFiles(viewRepresentation, viewValue, viewCreator);
+        }
     }
 
     public static boolean isEnabled() {

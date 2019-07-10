@@ -50,13 +50,19 @@ package org.knime.ext.seleniumdrivers.multios;
 
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.knime.core.node.KNIMEConstants;
 import org.knime.core.node.NodeLogger;
+import org.knime.core.util.IEarlyStartup;
+import org.knime.js.core.JSCorePlugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -123,6 +129,42 @@ public class MultiOSDriverActivator extends Plugin {
         }
 	}
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void warmup() {
+        IPreferenceStore prefs = JSCorePlugin.getDefault().getPreferenceStore();
+        String viewClass = prefs.getString(JSCorePlugin.P_VIEW_BROWSER);
+        String imageClass = prefs.getString(JSCorePlugin.P_HEADLESS_BROWSER);
+        boolean warmupChrome = false;
+        boolean warmupChromium = false;
+        if (ChromeWizardNodeView.class.getName().equals(viewClass)) {
+            warmupChrome = true;
+        }
+        if (ChromiumWizardNodeView.class.getName().equals(viewClass)) {
+            warmupChromium = true;
+        }
+        if (ChromeImageGenerator.class.getName().equals(imageClass)) {
+            warmupChrome = true;
+        }
+        if (ChromiumImageGenerator.class.getName().equals(imageClass)) {
+            warmupChromium = true;
+        }
+        List<ChromeImageGenerator> browsers = new ArrayList<ChromeImageGenerator>(2);
+        if (warmupChrome) {
+            browsers.add(new ChromeImageGenerator(null));
+        }
+        if (warmupChromium) {
+            browsers.add(new ChromiumImageGenerator(null));
+        }
+        for (ChromeImageGenerator browser : browsers) {
+            try {
+                browser.initDriver();
+                browser.cleanup();
+            } catch (Exception e) {
+                LOGGER.warn("Configured browser for JS views could not be started: " + e.getMessage(), e);
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -146,6 +188,28 @@ public class MultiOSDriverActivator extends Plugin {
 
     static String getBundleName() {
     	return BUNDLE_NAME;
+    }
+
+    /**
+     * Early startup routine to warm up configured chrome browsers so that first open of a view is quicker
+     *
+     * @author Christian Albrecht, KNIME GmbH, Konstanz, Germany
+     */
+    public static class Startup implements IEarlyStartup {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            try {
+                // try to warmup the chrome/chromium browser (if configured) in the background
+                KNIMEConstants.GLOBAL_THREAD_POOL.submit(() -> warmup());
+            } catch (InterruptedException ex) {
+                // do nothing
+            }
+        }
+
     }
 
 }

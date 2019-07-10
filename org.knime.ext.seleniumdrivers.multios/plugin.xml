@@ -25,5 +25,11 @@
             name="Bundled Headless Chromium (version 75)">
       </headlessBrowser>
    </extension>
+   <extension
+         point="org.knime.core.EarlyStartup">
+      <provider
+            class="org.knime.ext.seleniumdrivers.multios.MultiOSDriverActivator$Startup">
+      </provider>
+   </extension>
 
 </plugin>
