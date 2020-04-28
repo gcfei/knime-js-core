@@ -330,6 +330,7 @@ public class ChromeWizardNodeView<T extends ViewableModel & WizardNode<REP, VAL>
                 }
             }
 
+            options.addArguments("--verbose");
             String cliOptions = prefs.getString(JSCorePlugin.P_BROWSER_CLI_ARGS);
             if (cliOptions != null && !cliOptions.isEmpty()) {
                 options.addArguments(cliOptions.split("\\s+"));

@@ -172,6 +172,7 @@ public class ChromeImageGenerator<T extends NodeModel & WizardNode<REP, VAL>, RE
             if (cliOptions != null && !cliOptions.isEmpty()) {
                 options.addArguments(cliOptions.split("\\s+"));
             }
+            options.addArguments("--verbose");
             options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
 
             m_driver = new ChromeDriver(options);
