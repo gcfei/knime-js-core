@@ -175,6 +175,9 @@ public class ChromeImageGenerator<T extends NodeModel & WizardNode<REP, VAL>, RE
             options.addArguments("-whitelisted-ips=");
             options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
 
+            System.err.println("initializing chrome driver with the options:");
+            options.toJson().forEach((k, v) -> System.err.println(k + "->" + v.toString()));
+
             m_driver = new ChromeDriver(options);
             m_driver.manage().timeouts().implicitlyWait(VIEW_INIT_TIMEOUT, TimeUnit.SECONDS)
             .pageLoadTimeout(ChromeWizardNodeView.DEFAULT_TIMEOUT, TimeUnit.SECONDS)

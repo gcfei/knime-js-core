@@ -337,6 +337,9 @@ public class ChromeWizardNodeView<T extends ViewableModel & WizardNode<REP, VAL>
             }
             options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.IGNORE);
 
+            System.err.println("initializing chrome driver with the options:");
+            options.toJson().forEach((k, v) -> System.err.println(k + "->" + v.toString()));
+
             m_driver = new ChromeDriver(options);
             m_driver.manage().timeouts().pageLoadTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .setScriptTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
