@@ -172,7 +172,7 @@ public class ChromeImageGenerator<T extends NodeModel & WizardNode<REP, VAL>, RE
             if (cliOptions != null && !cliOptions.isEmpty()) {
                 options.addArguments(cliOptions.split("\\s+"));
             }
-            options.addArguments("--whitelisted-ips=");
+            options.addArguments("--whitelisted-ips=''");
             options.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
 
             System.err.println("initializing chrome driver with the options:");
